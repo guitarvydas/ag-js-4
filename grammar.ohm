@@ -1,0 +1,18 @@
+AGjson {
+JSON = JSONobject | JSONarray | JSONatom
+JSONobject = "{" (JSONnamedObjectComma* JSONnamedObject)? "}"
+JSONarray = "[" ( JSONcomma* JSON)? "]"
+JSONcomma = JSON ","
+JSONnamedObjectComma = JSONnamedObject ","
+JSONnamedObject = Name ":" JSON
+JSONatom = "true" | "false" | string | Num | Ident
+Name = Ident | string
+Num = digit+
+Ident = firstChar followChar*
+firstChar = letter
+followChar = alnum
+string = "\"" stringChar* "\""
+stringChar = escapedChar | notDQuote
+notDQuote = ~"\"" any
+escapedChar = "\\" "\"" 
+}

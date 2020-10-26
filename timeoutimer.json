@@ -1,0 +1,82 @@
+{
+    name: FileSelector,
+    kind: hierarchicalStateMachine,
+    diagram: {
+	{
+	    id: 6,
+	    shape : circle,
+	    left: 365,
+	    top:  10,
+	    width: 30,
+	    height: 30
+	},
+	{
+	    id: 7,
+	    shape: ellipse,
+	    left: 320,
+	    top:  120,
+	    width: 120,
+	    height: 80,
+	    text: "[this.sendSync()]\nIDLE\n"
+	},
+	{
+	    id: 8,
+	    shape: ellipse,
+	    left: 320,
+	    top:  320,
+	    width: 120,
+	    height: 80,
+	    text: "[this.startTimer()]\nTIMING\n"
+	},
+
+	{
+	    id: 0,
+	    shape: arrow,
+	    from: 6,
+	    to: 7,
+	    text: ""
+	},
+
+	{
+	    id: 1,
+	    shape: arrow,
+	    from: 6,
+	    to: 7,
+	    text: "\nstart\n[this.time = this.event.data]"
+	},
+
+	{
+	    id: 2,
+	    shape: arrow,
+	    from: 6,
+	    to: 7,
+	    text: "\nstop\n[this.killTimer()]"
+	},
+
+	{
+	    id: 3,
+	    shape: arrow,
+	    from: 6,
+	    to: 7,
+	    text: "\mtimeout\m[this.sendTimeout()]"
+	},
+
+	{
+	    id: 4,
+	    shape: arrow,
+	    from: 6,
+	    to: 7,
+	    text: "\nstart\n[this.killTimer();\nthis.sendSync();]"
+	},
+
+	{
+	    id: 5,
+	    shape: arrow,
+	    from: 6,
+	    to: 7,
+	    text: "\nstop\n"
+	}
+    }
+};
+
+	
