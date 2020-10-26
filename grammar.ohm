@@ -5,7 +5,7 @@ JSONarray = "[" ( JSONcomma* JSON)? "]"
 JSONcomma = JSON ","
 JSONnamedObjectComma = JSONnamedObject ","
 JSONnamedObject = Name ":" JSON
-JSONatom = "true" | "false" | string | Num | Ident
+JSONatom = "true" | "false" | PreFormattedString | string | Num | Ident
 Name = Ident | string
 Num = digit+
 Ident = firstChar followChar*
@@ -15,4 +15,6 @@ string = "\"" stringChar* "\""
 stringChar = escapedChar | notDQuote
 notDQuote = ~"\"" any
 escapedChar = "\\" "\"" 
+
+PreFormattedString = "<pre>" (~"</pre>" any)+ "</pre>"
 }

@@ -2,7 +2,7 @@
     name: FileSelector,
     kind: javascript,
     code:
-"
+<pre>
 /* (this example is just an example of the very basic ideas) */
 
 // inputs: none
@@ -37,5 +37,5 @@ function FileSelector (id, name) {
         kernel.io ();
     };
 };
-"
+</pre>
 }
