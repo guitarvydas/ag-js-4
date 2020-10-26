@@ -33,8 +33,7 @@
 	    id: 0,
 	    shape: arrow,
 	    from: 6,
-	    to: 7,
-	    text: ""
+	    to: 7
 	},
 
 	{

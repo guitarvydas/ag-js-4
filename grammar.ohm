@@ -1,6 +1,6 @@
 AGjson {
 
-Part = Schematic | Leaf
+Part = Schematic | Leaf | HierarchicalStateMachine
 
 Schematic = "{" PartName "," SchematicKind "," SchematicParts "," SchematicWires "}"
 PartName = "name"  ":" (Ident | string)
@@ -18,7 +18,26 @@ PartPin = "{" "part" ":" Ident "," "pin" ":" IdentOrString "}"
 Leaf = "{" PartName "," LeafKind "," Text "}"
 LeafKind = "kind" ":" "javascript"
 
+HierarchicalStateMachine = "{" PartName "," HierarchicalStateMachineKind "," Diagram "}"
+HierarchicalStateMachineKind = "kind" ":" "hierarchicalStateMachine"
+
+
+Diagram = "diagram" ":" "[" GlyphComma* Glyph "]"
+GlyphComma = Glyph ","
+Glyph = Circle | Ellipse | Arrow
+Circle = "{" GlyphID "," "shape" ":" "circle" "," LTWH CircleText? "}"
+Ellipse = "{" GlyphID "," "shape" ":" "ellipse" "," LTWH EllipseText? "}"
+Arrow = "{" GlyphID "," "shape" ":" "arrow" "," FromTo ArrowText? "}"
+
+CircleText = "," Text
+EllipseText = "," Text
+ArrowText = "," Text
+
 Text = "text" ":" (PreFormattedString | string)
+LTWH = "left" ":" Num "," "top" ":" Num "," "width" ":" Num "," "height" ":" Num
+FromTo = "from" ":" GlyphIDRef "," "to" ":" GlyphIDRef
+GlyphID = "id" ":" (Ident | Num)
+GlyphIDRef = Ident | Num
 
 
 JSON = JSONobject | JSONarray | JSONatom
