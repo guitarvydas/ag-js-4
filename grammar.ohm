@@ -1,8 +1,10 @@
 AGjson {
 
-Schematic = "{" PartName "," PartKind "," SchematicParts "," SchematicWires "}"
+Part = Schematic | Leaf
+
+Schematic = "{" PartName "," SchematicKind "," SchematicParts "," SchematicWires "}"
 PartName = "name"  ":" (Ident | string)
-PartKind = "kind" ":" "schematic"
+SchematicKind = "kind" ":" "schematic"
 SchematicParts = "parts" ":" PartArray
 PartArray = "[" (Ident ",")* Ident "]"
 SchematicWires = "wires" ":" WireArray
@@ -12,6 +14,12 @@ Sender = "sender" ":" PartPin
 Receiver = "receiver" ":" PartPin
 ReceiverComma = Receiver ","
 PartPin = "{" "part" ":" Ident "," "pin" ":" IdentOrString "}"
+
+Leaf = "{" PartName "," LeafKind "," Text "}"
+LeafKind = "kind" ":" "javascript"
+
+Text = "text" ":" (PreFormattedString | string)
+
 
 JSON = JSONobject | JSONarray | JSONatom
 JSONobject = "{" (JSONnamedObjectComma* JSONnamedObject)? "}"
