@@ -1,8 +1,8 @@
 {
-    name: FileSelector,
+    name: TimeoutTimer,
     kind: hierarchicalStateMachine,
-    diagram: {
-	{
+    diagram: [
+	{ 
 	    id: 6,
 	    shape : circle,
 	    left: 365,
@@ -76,7 +76,7 @@
 	    to: 7,
 	    text: "\nstop\n"
 	}
-    }
-};
+    ]
+}
 
-	
+

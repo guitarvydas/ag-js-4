@@ -1,4 +1,18 @@
 AGjson {
+
+Schematic = "{" PartName "," PartKind "," SchematicParts "," SchematicWires "}"
+PartName = "name"  ":" (Ident | string)
+PartKind = "kind" ":" "schematic"
+SchematicParts = "parts" ":" PartArray
+PartArray = "[" (Ident ",")* Ident "]"
+SchematicWires = "wires" ":" WireArray
+WireArray = "[" (Wire ",")* Wire "]"
+Wire = "{" Sender "," ReceiverComma* Receiver "}"
+Sender = "sender" ":" PartPin
+Receiver = "receiver" ":" PartPin
+ReceiverComma = Receiver ","
+PartPin = "{" "part" ":" Ident "," "pin" ":" IdentOrString "}"
+
 JSON = JSONobject | JSONarray | JSONatom
 JSONobject = "{" (JSONnamedObjectComma* JSONnamedObject)? "}"
 JSONarray = "[" ( JSONcomma* JSON)? "]"
@@ -17,4 +31,6 @@ notDQuote = ~"\"" any
 escapedChar = "\\" "\"" 
 
 PreFormattedString = "<pre>" (~"</pre>" any)+ "</pre>"
+
+IdentOrString = Ident | string
 }

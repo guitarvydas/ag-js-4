@@ -1,7 +1,7 @@
 {
     name: FileSelector,
     kind: javascript,
-    code:
+    text:
 <pre>
 /* (this example is just an example of the very basic ideas) */
 
