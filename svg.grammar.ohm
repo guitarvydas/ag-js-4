@@ -1,0 +1,17 @@
+SVGgrammar {
+HTMLdiagram = "<html>" NotSVG+ SVGsection NotHTMLend+ "</html>"
+SVGsection = "<svg" WH ">" (Rect | Text)+ "</svg>"
+
+Rect = "<rect" ID XYWH ">" "</rect>"
+Text = "<text" ID XY ">" HTMLchar+ "</text>"
+
+ID = "id=" NumString
+NumString = "\"" digit+ "\""
+XYWH = XY WH
+XY = "x=" NumString "y=" NumString
+WH = "width=" NumString "height=" NumString
+HTMLchar = ~">" ~"<" any
+NotSVGend = ~"</svg>" any
+NotSVG = ~"<svg" any
+NotHTMLend = ~"</html>" any
+}
