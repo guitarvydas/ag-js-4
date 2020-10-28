@@ -6,8 +6,8 @@
     <script src="./ohm.js"></script>
 
     <script type="text/ohm-js">
-DiagramGrammar {
-  HTMLdiagram = "<html>" NotSVG+ SVGsection NotHTMLend+ "</html>"
+SchematicDiagramGrammar {
+  SchematicDiagram = "<html>" NotSVG+ SVGsection NotHTMLend+ "</html>"
   SVGsection = "<svg" WH ">" (Rect | Text)+ "</svg>"
   
   Rect = "<rect" ID XYWH ">" "</rect>"
@@ -65,14 +65,14 @@ DiagramGrammar {
     <script>
 
       var grammars = ohm.grammarsFromScriptElements();
-      var Diagram_grammar = grammars["DiagramGrammar"];
-      var Diagram_semantics = Diagram_grammar.createSemantics();
+      var SchematicDiagram_grammar = grammars["SchematicDiagramGrammar"];
+      var SchematicDiagram_semantics = SchematicDiagram_grammar.createSemantics();
       var tests = document.querySelectorAll('script[type="text/test"]');
       
-      Diagram_semantics.addOperation(
+      SchematicDiagram_semantics.addOperation(
 	  'toFB',
 	  {
-	      HTMLdiagram: function (_begin, _notSVG, svg, _notHTML, _end) {},
+	      SchematicDiagram: function (_begin, _notSVG, svg, _notHTML, _end) {},
 	      SVGsection: function (_svg, wh, _close, contents, _end) {},
               Rect: function (_begin, id, xywh, _close, _end) {},
               Text: function (_begin, id, xy, _close, chars, _end) {},
@@ -97,6 +97,16 @@ DiagramGrammar {
       }
 
       function displayFB() {
+	  tests.forEach(
+	      function (el) {
+		  var teststr = el.innerHTML;
+		  var tree = SchematicDiagram_grammar.match (teststr);
+		  if (tree.failed()) {
+		      console.log ("failed");
+		  } else {
+		      console.lot ("succeeded");
+		  }
+	      });
           displayDate ();
       }
     </script>
