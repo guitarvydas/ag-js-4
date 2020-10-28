@@ -76,7 +76,7 @@ SchematicDiagramGrammar {
       SchematicDiagram_semantics.addOperation(
 	  'toFB',
 	  {
-	      SchematicDiagram: function (_begin, _notSVG, svg, _notHTML, _end) {},
+	      SchematicDiagram: function (_begin, _notSVG, svg, _notHTML, _end) { return svg.toFB(); },
 	      SVGsection: function (_svg, wh, _close, contents, _end) {},
               Rect: function (_begin, id, xywh, _close, _end) {},
               Text: function (_begin, id, xy, _close, chars, _end) {},
@@ -103,9 +103,10 @@ SchematicDiagramGrammar {
       function displayFB() {
 	  var parseTree = SchematicDiagram_grammar.match (testString);
 	  if (parseTree.failed()) {
-	      console.log ("failed");
+	      document.getElementById('result').innerHTML = "**FAILED**";
 	  } else {
-	      console.log ("succeeded");
+	      var fb = SchematicDiagram_semantics(parseTree).toFB()
+	      document.getElementById('result').innerHTML = fb;
 	  }
 	  displayDate ();
       }
