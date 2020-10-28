@@ -25,49 +25,53 @@ SchematicDiagramGrammar {
 }
 </script>
 
-    <script type="text/text">
-      <![CDATA[
-<html>
-  <title>Top</title>
-  <head>
-    <style>
-      rect { fill:#DAE8FC }
-    </style>
-  </head>
-  <body>
+<!-- 
+     Note that the test string contains no single quotes itself.
+     The test string is quoted by JavaScript backtick quotes ("template literals").
+  -->
     
-    <h1>Top Part (Schematic)</h1>
-    
-    <svg width="800" height="800">
-      <rect id="0" x="40" y="120" width="150" height="60"></rect>
-      <rect id="1" x="40" y="320" width="150" height="60"></rect>
-      <rect id="2" x="280" y="120" width="250" height="130"></rect>
-      <rect id="3" x="650" y="120" width="150" height="60"></rect>
-      <rect id="4" x="650" y="270" width="150" height="60"></rect>
-      <rect id="5" x="650" y="360" width="150" height="60"></rect>
-      <rect id="6" x="650" y="440" width="150" height="60"></rect>
-      
-      <text id="7" x="50" y="150" >FileSelector</text>
-      <text id="8" x="50" y="350" >TimeoutTimer</text>
-      <text id="9" x="290" y="185" >CallbackLogic</text>
-      <text id="10" x="660" y="150" >Display</text>
-      <text id="11" x="660" y="320" >ErrorHandler</text>
-      <text id="12" x="660" y="410" >AbortHandler</text>
-      <text id="13" x="660" y="490" >NoResponseHandler</text>
+    <script>
+    var testString = `
+	<html>
+	  <title>Top</title>
+	  <head>
+	    <style>
+	      rect { fill:#DAE8FC }
+	    </style>
+	  </head>
+	  <body>
 
-    </svg>
-    
-  </body>
-</html>
-      ]]>
-    </script>
+	    <h1>Top Part (Schematic)</h1>
+
+	    <svg width="800" height="800">
+	      <rect id="0" x="40" y="120" width="150" height="60"></rect>
+	      <rect id="1" x="40" y="320" width="150" height="60"></rect>
+	      <rect id="2" x="280" y="120" width="250" height="130"></rect>
+	      <rect id="3" x="650" y="120" width="150" height="60"></rect>
+	      <rect id="4" x="650" y="270" width="150" height="60"></rect>
+	      <rect id="5" x="650" y="360" width="150" height="60"></rect>
+	      <rect id="6" x="650" y="440" width="150" height="60"></rect>
+
+	      <text id="7" x="50" y="150" >FileSelector</text>
+	      <text id="8" x="50" y="350" >TimeoutTimer</text>
+	      <text id="9" x="290" y="185" >CallbackLogic</text>
+	      <text id="10" x="660" y="150" >Display</text>
+	      <text id="11" x="660" y="320" >ErrorHandler</text>
+	      <text id="12" x="660" y="410" >AbortHandler</text>
+	      <text id="13" x="660" y="490" >NoResponseHandler</text>
+
+	    </svg>
+
+	  </body>
+        </html>
+	`;
+</script>
 
     <script>
 
       var grammars = ohm.grammarsFromScriptElements();
       var SchematicDiagram_grammar = grammars["SchematicDiagramGrammar"];
       var SchematicDiagram_semantics = SchematicDiagram_grammar.createSemantics();
-      var tests = document.querySelectorAll('script[type="text/test"]');
       
       SchematicDiagram_semantics.addOperation(
 	  'toFB',
@@ -97,20 +101,16 @@ SchematicDiagramGrammar {
       }
 
       function displayFB() {
-	  tests.forEach(
-	      function (el) {
-		  var teststr = el.innerHTML;
-		  var tree = SchematicDiagram_grammar.match (teststr);
-		  if (tree.failed()) {
-		      console.log ("failed");
-		  } else {
-		      console.lot ("succeeded");
-		  }
-	      });
-          displayDate ();
+	  var parseTree = SchematicDiagram_grammar.match (testString);
+	  if (parseTree.failed()) {
+	      console.log ("failed");
+	  } else {
+	      console.log ("succeeded");
+	  }
+	  displayDate ();
       }
     </script>
-
+    
   </head>
   <body>
     <button onclick="displayFB()">Create Factbase</button>
