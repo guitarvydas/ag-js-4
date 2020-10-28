@@ -2,7 +2,8 @@
   <head>
     <title>SVG to Factbase</title>
     <meta charset=utf-8>
-    <script src="https://github.com/harc/ohm/tree/master/ohm-js/dist/ohm.js"></script>
+    <!-- <script src="https://github.com/harc/ohm/tree/master/ohm-js/dist/ohm.js"></script> -->
+    <script src="./ohm.js"></script>
 
     <script type="text/ohm-js">
 DiagramGrammar {
@@ -63,15 +64,15 @@ DiagramGrammar {
 
     <script>
 
-      var grammars_ = ohm.grammarsFromScriptElements();
-      var Diagram_grammar = grammars["SVGgrammar"];
-      var tests = document.querySelectorAll('script[type="text/test"]');
+      var grammars = ohm.grammarsFromScriptElements();
+      var Diagram_grammar = grammars["DiagramGrammar"];
       var Diagram_semantics = Diagram_grammar.createSemantics();
+      var tests = document.querySelectorAll('script[type="text/test"]');
       
       Diagram_semantics.addOperation(
-	  'asFB',
+	  'toFB',
 	  {
-	      HTMLDiagram: function (_begin, _notSVG, svg, _notHTML, _end) {},
+	      HTMLdiagram: function (_begin, _notSVG, svg, _notHTML, _end) {},
 	      SVGsection: function (_svg, wh, _close, contents, _end) {},
               Rect: function (_begin, id, xywh, _close, _end) {},
               Text: function (_begin, id, xy, _close, chars, _end) {},
@@ -80,10 +81,10 @@ DiagramGrammar {
               XYWH: function (xy, wh) {},
               XY: function (_x, xstring, _y, ystring) {},
               WH: function (_w, wstring, _h, hstring) {},
-              HTMLchar: function (_not1, _not2, c) {},
-              NotSVGend: function (_not, c) {},
-              NotSVG: function (_not, c) {},
-              NotHTMLend: function (_not, c) {}
+              HTMLchar: function (c) {},
+              NotSVGend: function (c) {},
+              NotSVG: function (c) {},
+              NotHTMLend: function (c) {},
 
 	      _terminal: function() { return this.primitiveValue; }
           });      
