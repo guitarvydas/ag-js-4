@@ -51,10 +51,35 @@ if (parseTree.failed()) {
     console.log("Matching Succeeded")
 
     const SchematicDiagram_semantics = grammar.createSemantics()
+
+    SchematicDiagram_semantics.addOperation(
+	'toText',
+	{
+	    SchematicDiagram: function (begin, notSVG, svg, notBODY, hend) {},
+	    SVGsection: function (_svg, wh, _close, contents, _end) {},
+            Rect: function (_begin, idTree, xywhTree, _close, _end) {},
+            Text: function (_begin, idTree, xyTree, _close, chars, _end) {},
+            ID: function (_id, numstr) {},
+            XYWH: function (xy, wh) {},
+            XY: function (_x, xstring, _y, ystring) {},
+            WH: function (_w, wstring, _h, hstring) {},
+            HTMLchar: function (c) { return c.toFB(); },
+            NotSVGend: function (c) { return c.toFB(); },
+            NotSVG: function (c) { return c.toFB(); },
+            NotHTMLend: function (c) { return c.toFB(); },
+
+            numString: function (_q1, digits, _q2) { return parseInt (toPackedString(digits.toFB())); },
+	    string: function (_q1, cs, _q2) { return cs.toFB().join('');},
+	    notDQuote: function (c) { return c.toFB(); },
+	    _terminal: function () { return this.primitiveValue; }
+	});
+
     SchematicDiagram_semantics.addOperation(
 	'toFB',
 	{
-	    SchematicDiagram: function (_begin, _notSVG, svg, _notHTML, _end) { return svg.toFB(); },
+	    SchematicDiagram: function (begin, notSVG, svg, notBODY, hend) { 
+		return  begin.toText() + notSVG.toText() + svg.toText() + svg.toFB() + notBODY.toText() + hend.toText(); 
+	    },
 	    SVGsection: function (_svg, wh, _close, contents, _end) {
 		//var str = `script>\nconsole.log("begin");\nfunction fact(){};\n${contents.toFB().join('\n')}\n`;
 		var scrbegin = `<script type="text/factbase">\nconsole.log("begin");`;
