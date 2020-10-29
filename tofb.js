@@ -90,17 +90,3 @@ SchematicDiagram_semantics.addOperation(
 	_terminal: function() { return this.primitiveValue; }
     });      
 
-// recursive function to get the source of a non-terminal node
-// from https://repl.it/talk/learn/Making-your-own-programming-language-with-NodeJS/45779
-const node_to_source = node => {
-    if (node.ctorName == "_terminal") {
-	if (node.primitiveValue.toString() == "\n") {
-	    return ''
-	}
-	else
-            return node.primitiveValue
-    } else {
-        return node.children.map(n => node_to_source(n)).join('')
-    }
-}
-
