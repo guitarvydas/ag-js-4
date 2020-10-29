@@ -11,7 +11,7 @@ const ohm = require ('ohm-js')
 // const grammarSource = fs.readFileSync('grammar.ohm')
 const grammarSource = `
 SchematicDiagramGrammar {
-  SchematicDiagram = "<html>" NotSVG+ SVGsection NotHTMLend+ "</html>"
+  SchematicDiagram = Header "<body>" NotSVG+ SVGsection NotBODYend* "</body>" Trailer
   SVGsection = "<svg" WH ">" (Rect | Text)+ "</svg>"
   
   Rect = "<rect" ID XYWH ">" "</rect>"
@@ -24,10 +24,12 @@ SchematicDiagramGrammar {
   HTMLchar = ~">" ~"<" any
   NotSVGend = ~"</svg>" any
   NotSVG = ~"<svg" any
-  NotHTMLend = ~"</html>" any
+  NotBODYend = ~"</body>" any
   numString = ${ohmQuote} digit+ ${ohmQuote}
   string = ${ohmQuote} notDQuote* ${ohmQuote}
   notDQuote = ~${ohmQuote} any
+  Header = "<html>" (~"<body>" any)+
+  Trailer = "</html>"
 }
 `;
 
@@ -55,7 +57,7 @@ if (parseTree.failed()) {
     SchematicDiagram_semantics.addOperation(
 	'toText',
 	{
-	    SchematicDiagram: function (begin, notSVG, svg, notBODY, hend) {},
+	    SchematicDiagram: function (header, body, stuff1, svg, stuff2, bend, trailer) {},
 	    SVGsection: function (_svg, wh, _close, contents, _end) {},
             Rect: function (_begin, idTree, xywhTree, _close, _end) {},
             Text: function (_begin, idTree, xyTree, _close, chars, _end) {},
@@ -66,19 +68,24 @@ if (parseTree.failed()) {
             HTMLchar: function (c) { return c.toFB(); },
             NotSVGend: function (c) { return c.toFB(); },
             NotSVG: function (c) { return c.toFB(); },
-            NotHTMLend: function (c) { return c.toFB(); },
+            NotBODYend: function (c) { return c.toFB(); },
 
             numString: function (_q1, digits, _q2) { return parseInt (toPackedString(digits.toFB())); },
 	    string: function (_q1, cs, _q2) { return cs.toFB().join('');},
 	    notDQuote: function (c) { return c.toFB(); },
+	    
+	    Header: function (html, cs) { return html.toText() + cs.toText().join(''); },
+	    Trailer: function (endhtml) {},
+
 	    _terminal: function () { return this.primitiveValue; }
+
 	});
 
     SchematicDiagram_semantics.addOperation(
 	'toFB',
 	{
-	    SchematicDiagram: function (begin, notSVG, svg, notBODY, hend) { 
-		return  begin.toText() + notSVG.toText() + svg.toText() + svg.toFB() + notBODY.toText() + hend.toText(); 
+	    SchematicDiagram: function (header, body, stuff1, svg, stuff2, bend, trailer) { 
+		return  header.toText() + stuff1.toText() + svg.toText() + '\n' + svg.toFB() + '\n' + stuff2.toText() + trailer.toText(); 
 	    },
 	    SVGsection: function (_svg, wh, _close, contents, _end) {
 		//var str = `script>\nconsole.log("begin");\nfunction fact(){};\n${contents.toFB().join('\n')}\n`;
@@ -113,11 +120,14 @@ if (parseTree.failed()) {
             HTMLchar: function (c) { return c.toFB(); },
             NotSVGend: function (c) { return c.toFB(); },
             NotSVG: function (c) { return c.toFB(); },
-            NotHTMLend: function (c) { return c.toFB(); },
+            NotBODYend: function (c) { return c.toFB(); },
 
             numString: function (_q1, digits, _q2) { return parseInt (toPackedString(digits.toFB())); },
 	    string: function (_q1, cs, _q2) { return cs.toFB().join('');},
 	    notDQuote: function (c) { return c.toFB(); },
+
+	    Header: function (html, cs) {},
+	    Trailer: function (endhtml) {},
 
 	    _terminal: function() { return this.primitiveValue; }
 	});      
