@@ -1,8 +1,10 @@
 // usage:
 // npm install ohm-js
 // npm install minimist
-// node tofb.js --input=<input file>
+// node tofb.js --input=top.html
 
+
+const ohmQuote = '"' + "\\" + '"' + '"';
 
 const fs = require ('fs')
 const ohm = require ('ohm-js')
@@ -15,26 +17,32 @@ SchematicDiagramGrammar {
   Rect = "<rect" ID XYWH ">" "</rect>"
   Text = "<text" ID XY ">" HTMLchar+ "</text>"
   
-  ID = "id=" NumString
-  NumString = "\"" digit+ "\""
+  ID = "id=" string
   XYWH = XY WH
-  XY = "x=" NumString "y=" NumString
-  WH = "width=" NumString "height=" NumString
+  XY = "x=" numString "y=" numString
+  WH = "width=" numString "height=" numString
   HTMLchar = ~">" ~"<" any
   NotSVGend = ~"</svg>" any
   NotSVG = ~"<svg" any
   NotHTMLend = ~"</html>" any
+  numString = ${ohmQuote} digit+ ${ohmQuote}
+  string = ${ohmQuote} notDQuote* ${ohmQuote}
+  notDQuote = ~${ohmQuote} any
 }
 `;
 
-const grammar = ohm.grammar(grammarSource)
-// const parseTree = grammar.match(input)
+const grammar = ohm.grammar(grammarSource);
+var args = require('minimist')(process.argv.slice(2));
+var inputFilename = args['input'];
+const input = fs.readFileSync("./" + inputFilename);
+const parseTree = grammar.match(input);
 
-// if (parseTree.succeeded()) {
-//     console.log("Matching Succeeded")
-// } else {
-//     console.log("Matching Failed")
-// }
+if (parseTree.succeeded()) {
+   console.log("Matching Succeeded")
+} else {
+    console.log("Matching Failed")
+    console.log(grammar.trace(input).toString());
+}
 // const SchematicDiagramSemantics = grammar.createSemantics()
 // SchematicDiagram_semantics.addOperation(
 //     'toFB',
@@ -93,5 +101,3 @@ const grammar = ohm.grammar(grammarSource)
 //     }
 // }
 
-var args = require('minimist')(process.argv.slice(2));
-console.log (args['input']);
