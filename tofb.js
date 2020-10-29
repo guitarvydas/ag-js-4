@@ -58,13 +58,17 @@ if (parseTree.failed()) {
 	'toText',
 	{
 	    SchematicDiagram: function (header, body, stuff1, svg, stuff2, bend, trailer) {},
-	    SVGsection: function (_svg, wh, _close, contents, _end) {},
+	    SVGsection: function (_svg, wh, _close, contents, _end) {
+		return "<svg " + wh.toText() + ">" + contents.toText().join('') + "</svg>"
+	    },
             Rect: function (_begin, idTree, xywhTree, _close, _end) {},
             Text: function (_begin, idTree, xyTree, _close, chars, _end) {},
             ID: function (_id, numstr) {},
             XYWH: function (xy, wh) {},
             XY: function (_x, xstring, _y, ystring) {},
-            WH: function (_w, wstring, _h, hstring) {},
+            WH: function (_w, wstring, _h, hstring) {
+		return "width=" + wstring.toText() + " height=" + hstring.toText() ;
+	    },
             HTMLchar: function (c) { return c.toFB(); },
             NotSVGend: function (c) { return c.toFB(); },
             NotSVG: function (c) { return c.toFB(); },
@@ -85,7 +89,7 @@ if (parseTree.failed()) {
 	'toFB',
 	{
 	    SchematicDiagram: function (header, body, stuff1, svg, stuff2, bend, trailer) { 
-		return  header.toText() + stuff1.toText() + svg.toText() + '\n' + svg.toFB() + '\n' + stuff2.toText() + trailer.toText(); 
+		return  header.toText() + stuff1.toText() + body.toText() + '\n' + svg.toText() + '\n' + svg.toFB() + '\n' + stuff2.toText() + trailer.toText(); 
 	    },
 	    SVGsection: function (_svg, wh, _close, contents, _end) {
 		//var str = `script>\nconsole.log("begin");\nfunction fact(){};\n${contents.toFB().join('\n')}\n`;
