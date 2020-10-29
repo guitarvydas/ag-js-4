@@ -43,6 +43,11 @@ if (parseTree.succeeded()) {
     console.log("Matching Failed")
     console.log(grammar.trace(input).toString());
 }
+
+function toPackedString(a) {
+    return a.join('');
+}
+
 const SchematicDiagram_semantics = grammar.createSemantics()
 SchematicDiagram_semantics.addOperation(
     'toFB',
@@ -50,8 +55,9 @@ SchematicDiagram_semantics.addOperation(
 	SchematicDiagram: function (_begin, _notSVG, svg, _notHTML, _end) { return svg.toFB(); },
 	SVGsection: function (_svg, wh, _close, contents, _end) {
 	    //var str = `script>\nconsole.log("begin");\nfunction fact(){};\n${contents.toFB().join('\n')}\n`;
-	    var str = `script type="text/pass1">\nconsole.log("begin");`;
-	    str = "<" + str + `console.log("end");\n` + "<" + "/script>";
+	    var scrbegin = `<script type="text/factbase">\nconsole.log("begin");`;
+	    var scrend = `\n<script>`;
+	    str = scrbegin + `console.log("end");\n` + contents.toFB().join('\n') + scrend;
 	    console.log (str);
 	    return str;
 	},
@@ -90,3 +96,9 @@ SchematicDiagram_semantics.addOperation(
 	_terminal: function() { return this.primitiveValue; }
     });      
 
+function toFB () {
+    var fb = SchematicDiagram_semantics(parseTree).toFB()
+    return fb;
+}
+
+toFB();
