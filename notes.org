@@ -1,0 +1,6 @@
+* investigate error
+** `</script>` give syntax error in chrome
+** try `<script>1</script>`
+** try "<script>1</script>"
+** try inother browsers
+** slashdot
