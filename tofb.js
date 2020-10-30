@@ -10,6 +10,19 @@ const fs = require ('fs')
 const ohm = require ('ohm-js')
 // const grammarSource = fs.readFileSync('grammar.ohm')
 const grammarSource = `
+HTMLUnity {
+    HTML = htmlElement headerStuff bodyElement BodyStuff bodyElementEnd htmlEnd
+    htmlElement = "<html>" spaces
+    headerStuff = notBody*
+    bodyElement = "<body>" spaces
+    BodyStuff = bodyStuff
+    bodyStuff = notBodyEnd*	
+    notBody = ~"<body>" any
+    notBodyEnd = ~"</body>" any
+    bodyElementEnd = "</body>" spaces
+    htmlEnd = "</html>" spaces
+}
+
 SchematicDiagramGrammar {
   SchematicDiagram = Header "<body>" NotSVG+ SVGsection NotBODYend* "</body>" Trailer
   SVGsection = "<svg" WH ">" (Rect | Text)+ "</svg>"

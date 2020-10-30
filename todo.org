@@ -1,0 +1,4 @@
+* status
+** stopped to learn exports
+** proceed: debugging unity grammar for svg
+*** hack on Trace.prototype.org to produce org-compatible string
