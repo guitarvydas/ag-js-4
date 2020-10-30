@@ -23,24 +23,24 @@ HTMLUnity {
 }
 `;
 
-const grammar = ohm.grammar(unityGrammar);
+const uGrammar = ohm.grammar(unityGrammar);
 var args = require('minimist')(process.argv.slice(2));
 var inputFilename = args['input'];
 const input = fs.readFileSync("./" + inputFilename);
-const parseTree = grammar.match(input);
+const unityParseTree = uGrammar.match(input);
 
 function toPackedString(a) {
     return a.join('');
 }
 
-if (parseTree.failed()) {
+if (unityParseTree.failed()) {
 
     console.log("Matching Failed")
-    console.log(grammar.trace(input).toString());
+    console.log(uGrammar.trace(input).toString());
 
 } else {
     console.log("Matching Succeeded")
-    const semantics = grammar.createSemantics()
+    const semantics = uGrammar.createSemantics()
     semantics.addOperation (
 	'unity',
 	{
@@ -59,7 +59,7 @@ if (parseTree.failed()) {
 	    _terminal: function () { return this.primitiveValue; }
 	});
     
-    console.log(semantics(parseTree).unity());
+    console.log(semantics(unityParseTree).unity());
 }
 
 	
