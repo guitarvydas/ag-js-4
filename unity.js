@@ -70,7 +70,7 @@ repeatFn = function(fn, n) {
 };
 
 repeat = function(x, n) {
-  return repeatFn(() => x, n);
+
 };
 // --------------------------------------------------------------------
 // Private stuff
@@ -182,30 +182,32 @@ if (unityParseTree.failed ()) {
     semantics.addOperation (
 	'unity',
 	{
-	    html: function (spaces, htmlElement, headerStuff, bodyElement, bodyStuff, bodyElementEnd, htmlEnd) {
-		return spaces.unity() + htmlElement.unity () + headerStuff.unity () + bodyElement.unity () + bodyStuff.unity () + bodyElementEnd.unity () + htmlEnd.unity (); 
+	    html: function (wss, htmlElement, headerStuff, bodyElement, bodyStuff, bodyElementEnd, htmlEnd) {
+		return wss.unity ().join ('') + htmlElement.unity () + headerStuff.unity () + bodyElement.unity () + bodyStuff.unity () + bodyElementEnd.unity () + htmlEnd.unity (); 
 	    },
-	    htmlElement: function (html, spaces) { return "<html>" + spaces.unity ().join (''); },
+	    htmlElement: function (html, wss) { return "<html>" + wss.unity ().join (''); },
 	    headerStuff: function (stuff) { return stuff.unity ().join (''); },
-	    bodyElement: function (body, spaces) { return "<body>" + spaces.unity ().join ('')},
+	    bodyElement: function (body, wss) { return "<body>" + wss.unity ().join ('')},
 	    bodyStuff: function (stuff) { return stuff.unity ().join (''); },
 	    notBody:function (c) { return c.unity (); },
 	    notBodyEnd: function (c) { return c.unity (); },
-	    bodyElementEnd: function (body, spaces) { return "</body>" + spaces.unity ().join ('');},
-	    htmlEnd: function (html, spaces) { return "</html>" + spaces.unity ().join ('');},
+	    bodyElementEnd: function (body, wss) { return "</body>" + wss.unity ().join ('');},
+	    htmlEnd: function (html, wss) { return "</html>" + wss.unity ().join ('');},
 
 	    bodyStuff: function (pres, svg, post) { return pres.unity ().join('') + svg.unity () + post.unity (); },
 
 	    bodyStuffPre: function (c) { return c.unity (); },
 	    bodyStuffPost: function (stuff) { return stuff.unity (); },
-	    svgSection: function (svg, wh, _gt, spaces1, elements, endSvg, spaces2) {
-		return svg.unity () + wh.unity () + ">" + spaces1.unity ().join ('') + elements.unity ().join ('') + "</svg>" + spaces2.unity ().join ('');
+	    svgSection: function (svg, wh, _gt, wss1, elements, endSvg, wss2) {
+		return svg.unity () + wh.unity () + ">" + wss1.unity ().join ('') + elements.unity ().join ('') + "</svg>" + wss2.unity ().join ('');
 	    },
-	    rect: function (_rect, spaces1, id, xywh, gt, spaces2, _endRect, spaces3) {
-		return "<rect" + spaces1.unity ().join('') + id.unity () + xywh.unity () + ">" + spaces2.unity () + "</rect>" + spaces3.unity ().join ('');
+	    rect: function (_rect, wss1, id, xywh, gt, wss2, _endRect, wss3) {
+		console.log("rect:");
+		console.log(wss2);
+		return "<rect" + wss1.unity ().join('') + id.unity () + xywh.unity () + ">" + wss2.unity ().join ('') + "</rect>" + wss3.unity ().join ('');
 	    },
-	    text: function (_text, spaces1, id, xy, _gt, spaces2, cs, _endText, spaces3) {
-		return "<text" + spaces1.unity ().join ('') + id.unity () + xy.unity () + ">" + spaces2.unity ().join ('') + "</rect>" + spaces3.unity ().join ('');
+	    text: function (_text, wss1, id, xy, _gt, wss2, cs, _endText, wss3) {
+		return "<text" + wss1.unity ().join ('') + id.unity () + xy.unity () + ">" + wss2.unity ().join ('') + "</text>" + wss3.unity ().join ('');
 	    },
 	    id: function (ideq, id) { return "id=" + id.unity (); },
 	    xywh: function (xy, wh) { return xy.unity () + wh.unity (); },
@@ -216,16 +218,16 @@ if (unityParseTree.failed ()) {
 		return "width=" + wnum.unity () + "height=" + hnum.unity (); 
 	    },
 	    htmlchar: function (c) { return c.unity (); },
-	    numString: function (_q1, ds, _q2, spaces) {
-		return '"' + ds.unity ().join ('') + '"' + spaces.unity ();
+	    numString: function (_q1, ds, _q2, wss) {
+		return '"' + ds.unity ().join ('') + '"' + wss.unity ().join ('');
 	    },
-	    string: function (_q1, cs, _q2, spaces) { 
-		return '"' + cs.unity ().join ('') + '"' + spaces.unity ();
+	    string: function (_q1, cs, _q2, wss) { 
+		return '"' + cs.unity ().join ('') + '"' + wss.unity ().join ('');
 	    },
 	    notDQuote: function (c) { return c.unity (); },
 
-	    svgHeader: function (_svg, spaces) {
-		return "<svg" + spaces.unity ().join ('');
+	    svgHeader: function (_svg, wss) {
+		return "<svg" + wss.unity ().join ('');
 	    },
 
 	    ws: function (c) { 
