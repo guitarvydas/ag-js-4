@@ -12,14 +12,14 @@ const ohm = require ('ohm-js')
 const unityGrammar = `
 HTMLUnity {
     html = htmlElement headerStuff bodyElement bodyStuff bodyElementEnd htmlEnd
-    htmlElement = "<html>" spaces*
+    htmlElement = "<html>" spaces
     headerStuff = notBody*
-    bodyElement = "<body>" spaces*
+    bodyElement = "<body>" spaces
     bodyStuff = notBodyEnd*	
     notBody = ~"<body>" any
     notBodyEnd = ~"</body>" any
-    bodyElementEnd = "</body>" spaces*
-    htmlEnd = "</html>" spaces*
+    bodyElementEnd = "</body>" spaces
+    htmlEnd = "</html>" spaces
 }
 `;
 
@@ -59,7 +59,7 @@ if (parseTree.failed()) {
 	    _terminal: function () { return this.primitiveValue; }
 	});
     
-    console.log(semantics(parseTree).toFB());
+    console.log(semantics(parseTree).unity());
 }
 
 	
