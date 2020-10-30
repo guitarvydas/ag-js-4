@@ -11,35 +11,38 @@ const ohm = require ('ohm-js')
 
 const unityGrammar = `
 htmlUnity {
-    html = spaces htmlElement headerStuff bodyElement bodyStuff bodyElementEnd htmlEnd
-    htmlElement = "<html>" spaces
+    html = ws* htmlElement headerStuff bodyElement bodyStuff bodyElementEnd htmlEnd
+    htmlElement = "<html>" ws*
     headerStuff = notBody*
-    bodyElement = "<body>" spaces
+    bodyElement = "<body>" ws*
     bodyStuff = notBodyEnd*	
     notBody = ~"<body>" any
     notBodyEnd = ~"</body>" any
-    bodyElementEnd = "</body>" spaces
-    htmlEnd = "</html>" spaces
+    bodyElementEnd = "</body>" ws*
+    htmlEnd = "</html>" ws*
+    ws = " " | "\\t" | "\\n"
 }
 htmlSVGUnity <: htmlUnity {
     bodyStuff := bodyStuffPre* svgSection bodyStuffPost*
     bodyStuffPre = ~svgHeader any
     bodyStuffPost = ~"</body>" any
     
-    svgSection = svgHeader wh ">" spaces (rect | text)+ "</svg>" spaces
+    svgSection = svgHeader wh ">" ws* (rect | text)+ "</svg>" ws*
   
-    rect = "<rect" spaces id xywh ">" spaces "</rect>" spaces
-    text = "<text" spaces id xy ">" spaces htmlchar+ "</text>" spaces
+    rect = "<rect" ws* id xywh ">" ws* "</rect>" ws*
+    text = "<text" ws* id xy ">" ws* htmlchar+ "</text>" ws*
     id = "id=" string
     xywh = xy wh
     xy = "x=" numString "y=" numString
     wh = "width=" numString "height=" numString
     htmlchar = ~">" ~"<" any
-    numString = ${ohmQuote} digit+ ${ohmQuote} spaces
-    string = ${ohmQuote} notDQuote* ${ohmQuote} spaces
+    numString = ${ohmQuote} digit+ ${ohmQuote} ws*
+    string = ${ohmQuote} notDQuote* ${ohmQuote} ws*
     notDQuote = ~${ohmQuote} any
 
-    svgHeader = "<svg" spaces
+    svgHeader = "<svg" ws*
+
+    ws := " " | "\\t" | "\\n"
 }
 `;
 
@@ -196,18 +199,38 @@ if (unityParseTree.failed ()) {
 	    bodyStuffPre: function (c) { return c.unity (); },
 	    bodyStuffPost: function (stuff) { return stuff.unity (); },
 	    svgSection: function (svg, wh, _gt, spaces1, elements, endSvg, spaces2) {
-		return "<svg" + wh.unity () + ">" + elements.unity ().join ('') + "</svg>";
+		return svg.unity () + wh.unity () + ">" + spaces1.unity ().join ('') + elements.unity ().join ('') + "</svg>" + spaces2.unity ().join ('');
 	    },
-	    rect: function (rect, spaces1, _id, xywh, _gt, spaces2, _endRect, spaces3) {},
-	    text: function (text, spaces1, _id, xy, _gt, spaces2, cs, _endText, spaces3) {},
-	    id: function (ideq, id) {},
-	    xywh: function (xy, wh) {},
-	    xy: function (xeq, xnum, yeq, ynum) {},
-	    wh: function (weq, wnum, heq, hnum) {},
+	    rect: function (_rect, spaces1, id, xywh, gt, spaces2, _endRect, spaces3) {
+		return "<rect" + spaces1.unity ().join('') + id.unity () + xywh.unity () + ">" + spaces2.unity () + "</rect>" + spaces3.unity ().join ('');
+	    },
+	    text: function (_text, spaces1, id, xy, _gt, spaces2, cs, _endText, spaces3) {
+		return "<text" + spaces1.unity ().join ('') + id.unity () + xy.unity () + ">" + spaces2.unity ().join ('') + "</rect>" + spaces3.unity ().join ('');
+	    },
+	    id: function (ideq, id) { return "id=" + id.unity (); },
+	    xywh: function (xy, wh) { return xy.unity () + wh.unity (); },
+	    xy: function (xeq, xnum, yeq, ynum) {
+		return "x=" + xnum.unity () + "y=" + ynum.unity (); 
+	    },
+	    wh: function (weq, wnum, heq, hnum) {
+		return "width=" + wnum.unity () + "height=" + hnum.unity (); 
+	    },
 	    htmlchar: function (c) { return c.unity (); },
-	    numString: function (_q1, ds, _q2, spaces) {},
-	    string: function (_q1, cs, _q2, spaces) {},
+	    numString: function (_q1, ds, _q2, spaces) {
+		return '"' + ds.unity ().join ('') + '"' + spaces.unity ();
+	    },
+	    string: function (_q1, cs, _q2, spaces) { 
+		return '"' + cs.unity ().join ('') + '"' + spaces.unity ();
+	    },
 	    notDQuote: function (c) { return c.unity (); },
+
+	    svgHeader: function (_svg, spaces) {
+		return "<svg" + spaces.unity ().join ('');
+	    },
+
+	    ws: function (c) { 
+		return c.unity ();
+	    },
 
 	    _terminal: function () { return this.primitiveValue; }
 	});
