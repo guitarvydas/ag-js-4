@@ -22,9 +22,9 @@ htmlUnity {
     htmlEnd = "</html>" spaces
 }
 htmlSVGUnity <: htmlUnity {
-    bodyStuff := bodyStuffPre* svgSection bodyStuffPost
+    bodyStuff := bodyStuffPre* svgSection bodyStuffPost*
     bodyStuffPre = ~svgHeader any
-    bodyStuffPost = bodyStuff
+    bodyStuffPost = ~"</body>" any
     
     svgSection = svgHeader wh ">" spaces (rect | text)+ "</svg>" spaces
   
@@ -195,15 +195,15 @@ if (unityParseTree.failed ()) {
 
 	    bodyStuffPre: function (c) { return c.unity (); },
 	    bodyStuffPost: function (stuff) { return stuff.unity (); },
-	    svgSsection: function (svg, wh, _gt, spaces1, elements, endSvg, spaces2) {
+	    svgSection: function (svg, wh, _gt, spaces1, elements, endSvg, spaces2) {
 		return "<svg" + wh.unity () + ">" + elements.unity ().join ('') + "</svg>";
 	    },
 	    rect: function (rect, spaces1, _id, xywh, _gt, spaces2, _endRect, spaces3) {},
 	    text: function (text, spaces1, _id, xy, _gt, spaces2, cs, _endText, spaces3) {},
 	    id: function (ideq, id) {},
 	    xywh: function (xy, wh) {},
-	    xy: function (xeq, xnum, sp1, yeq, ynum, sp2) {},
-	    wh: function (weq, wnum, sp1, heq, hnum, sp2) {},
+	    xy: function (xeq, xnum, yeq, ynum) {},
+	    wh: function (weq, wnum, heq, hnum) {},
 	    htmlchar: function (c) { return c.unity (); },
 	    numString: function (_q1, ds, _q2, spaces) {},
 	    string: function (_q1, cs, _q2, spaces) {},
