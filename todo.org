@@ -2,3 +2,6 @@
 ** stopped to learn exports
 ** proceed: debugging unity grammar for svg
 *** hack on Trace.prototype.org to produce org-compatible string
+* make bug report
+** issue was missing "spaces" at front of html
+* investigate semantic actions during parse --> <html> ... </html>

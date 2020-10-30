@@ -11,7 +11,7 @@ const ohm = require ('ohm-js')
 
 const unityGrammar = `
 htmlUnity {
-    html = htmlElement headerStuff bodyElement bodyStuff bodyElementEnd htmlEnd
+    html = spaces htmlElement headerStuff bodyElement bodyStuff bodyElementEnd htmlEnd
     htmlElement = "<html>" spaces
     headerStuff = notBody*
     bodyElement = "<body>" spaces
@@ -179,8 +179,8 @@ if (unityParseTree.failed ()) {
     semantics.addOperation (
 	'unity',
 	{
-	    html: function (htmlElement, headerStuff, bodyElement, bodyStuff, bodyElementEnd, htmlEnd) {
-		return htmlElement.unity () + headerStuff.unity () + bodyElement.unity () + bodyStuff.unity () + bodyElementEnd.unity () + htmlEnd.unity (); 
+	    html: function (spaces, htmlElement, headerStuff, bodyElement, bodyStuff, bodyElementEnd, htmlEnd) {
+		return spaces.unity() + htmlElement.unity () + headerStuff.unity () + bodyElement.unity () + bodyStuff.unity () + bodyElementEnd.unity () + htmlEnd.unity (); 
 	    },
 	    htmlElement: function (html, spaces) { return "<html>" + spaces.unity ().join (''); },
 	    headerStuff: function (stuff) { return stuff.unity ().join (''); },
