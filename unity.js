@@ -51,130 +51,18 @@ const grammar = grammars["htmlSVGUnity"];
 var args = require('minimist') (process.argv.slice (2));
 var inputFilename = args['input'];
 const input = fs.readFileSync("./" + inputFilename);
-const unityParseTree = grammar.match (input);
+const parseTree = grammar.match (input);
 
 function toPackedString (a) {
     return a.join ('');
 }
 
-////////
-// toOrg
-// copy/pasted from ohm-js/src/Trace.js and common.js
-///////
-repeatFn = function(fn, n) {
-  const arr = [];
-  while (n-- > 0) {
-    arr.push(fn());
-  }
-  return arr;
-};
 
-repeat = function(x, n) {
-
-};
-// --------------------------------------------------------------------
-// Private stuff
-// --------------------------------------------------------------------
-// Unicode characters that are used in the `toString` output.
-var BALLOT_X = '\u2717';
-var CHECK_MARK = '\u2713';
-var DOT_OPERATOR = '\u22C5';
-var RIGHTWARDS_DOUBLE_ARROW = '\u21D2';
-var SYMBOL_FOR_HORIZONTAL_TABULATION = '\u2409';
-var SYMBOL_FOR_LINE_FEED = '\u240A';
-var SYMBOL_FOR_CARRIAGE_RETURN = '\u240D';
-var Flags = {
-    succeeded: 1 << 0,
-    isRootNode: 1 << 1,
-    isImplicitSpaces: 1 << 2,
-    isMemoized: 1 << 3,
-    isHeadOfLeftRecursion: 1 << 4,
-    terminatesLR: 1 << 5
-};
-function spaces(n) {
-    return repeat(' ', n).join('');
-}
-function asterisks(n) {
-    return repeat('*', n).join('');
-}
-// Return a string representation of a portion of `input` at offset `pos`.
-// The result will contain exactly `len` characters.
-function getInputExcerpt(input, pos, len) {
-    var excerpt = asEscapedString(input.slice(pos, pos + len));
-    // Pad the output if necessary.
-    if (excerpt.length < len) {
-        return excerpt + repeat(' ', len - excerpt.length).join('');
-    }
-    return excerpt;
-}
-function asEscapedString(obj) {
-    if (typeof obj === 'string') {
-        // Replace non-printable characters with visible symbols.
-        return obj
-            .replace(/ /g, DOT_OPERATOR)
-            .replace(/\t/g, SYMBOL_FOR_HORIZONTAL_TABULATION)
-            .replace(/\n/g, SYMBOL_FOR_LINE_FEED)
-            .replace(/\r/g, SYMBOL_FOR_CARRIAGE_RETURN);
-    }
-    return String(obj);
-}
-
-// StringBuffer - from common.js
-
-StringBuffer = function() {
-  this.strings = [];
-};
-
-StringBuffer.prototype.append = function(str) {
-  this.strings.push(str);
-};
-
-StringBuffer.prototype.contents = function() {
-  return this.strings.join('');
-};
-// Return a string representation of the trace.
-// Sample:
-//     12⋅+⋅2⋅*⋅3 ✓ exp ⇒  "12"
-//     12⋅+⋅2⋅*⋅3   ✓ addExp (LR) ⇒  "12"
-//     12⋅+⋅2⋅*⋅3       ✗ addExp_plus
-toOrgFunction = function () {
-    // same as toString, except we prepend an appropriate number of "*"s to the front of each line
-    // save the result in a file with .org extension, then edit it with emacs (it should enter org-mode)
-    // org-mode - used TAB key on line with *'s, to expand/contract the line
-  const sb = new StringBuffer();
-  this.walk((node, parent, depth) => {
-    if (!node) {
-      return this.SKIP;
-    }
-    const ctorName = node.expr.constructor.name;
-    // Don't print anything for Alt nodes.
-    if (ctorName === 'Alt') {
-      return; // eslint-disable-line consistent-return
-    }
-      sb.append(asterisks(depth * 2 + 1) + " " + getInputExcerpt(node.input, node.pos, 10) + spaces(depth * 2 + 1));
-    sb.append((node.succeeded ? CHECK_MARK : BALLOT_X) + ' ' + node.displayString);
-    if (node.isHeadOfLeftRecursion) {
-      sb.append(' (LR)');
-    }
-    if (node.succeeded) {
-      const contents = asEscapedString(node.source.contents);
-      sb.append(' ' + RIGHTWARDS_DOUBLE_ARROW + '  ');
-      sb.append(typeof contents === 'string' ? '"' + contents + '"' : contents);
-    }
-    sb.append('\n');
-  });
-  return sb.contents();
-};
-////////
-// end toOrg
-///////
-
-if (unityParseTree.failed ()) {
+if (parseTree.failed ()) {
     
     console.log ("Matching Failed")
     var tr = grammar.trace (input);
-    tr.toOrg = toOrgFunction;
-    console.log (tr.toOrg ());
+    console.log (tr.toString ());
 
 } else {
     console.log ("Matching Succeeded")
@@ -202,8 +90,6 @@ if (unityParseTree.failed ()) {
 		return svg.unity () + wh.unity () + ">" + wss1.unity ().join ('') + elements.unity ().join ('') + "</svg>" + wss2.unity ().join ('');
 	    },
 	    rect: function (_rect, wss1, id, xywh, gt, wss2, _endRect, wss3) {
-		console.log("rect:");
-		console.log(wss2);
 		return "<rect" + wss1.unity ().join('') + id.unity () + xywh.unity () + ">" + wss2.unity ().join ('') + "</rect>" + wss3.unity ().join ('');
 	    },
 	    text: function (_text, wss1, id, xy, _gt, wss2, cs, _endText, wss3) {
@@ -237,7 +123,144 @@ if (unityParseTree.failed ()) {
 	    _terminal: function () { return this.primitiveValue; }
 	});
     
-    console.log (semantics (unityParseTree).unity ());
+    semantics.addOperation (
+	'toFactbase',
+	{
+	    html: function (wss, htmlElement, headerStuff, bodyElement, bodyStuff, bodyElementEnd, htmlEnd) { throw "INTERNAL ERROR"; },
+	    htmlElement: function (html, wss) { throw "INTERNAL ERROR"; },
+	    headerStuff: function (stuff) { throw "INTERNAL ERROR"; },
+	    bodyElement: function (body, wss) { throw "INTERNAL ERROR"; },
+	    bodyStuff: function (stuff) { throw "INTERNAL ERROR"; },
+	    notBody:function (c) { throw "INTERNAL ERROR"; },
+	    notBodyEnd: function (c) { throw "INTERNAL ERROR"; },
+	    bodyElementEnd: function (body, wss) { throw "INTERNAL ERROR"; },
+	    htmlEnd: function (html, wss) { throw "INTERNAL ERROR"; },
+
+	    bodyStuff: function (pres, svg, post) { throw "INTERNAL ERROR"; },
+
+	    bodyStuffPre: function (c) { throw "INTERNAL ERROR"; },
+	    bodyStuffPost: function (stuff) { throw "INTERNAL ERROR"; },
+	    svgSection: function (svg, wh, _gt, wss1, elements, endSvg, wss2) { throw "INTERNAL ERROR"; },
+
+	    // a fact, in general, is a triple { relation, subject, object }
+	    // a factbase, in general, is a collection of triples
+	    // we create facts by calling the JS "fact" function
+
+	    // rect returns an array[4] of fact strings
+	    rect: function (_rect, _wss1, idTree, xywhTree, _gt, _wss2, _endRect, _wss3) {
+		var result = [];
+		var id = idTree.toFactbase ();
+		var xywh = xywhTree.toFactbase ();
+		result.push (`fact ("rect_x", ${id}, ${xywh[0]});`);
+		result.push (`fact ("rect_y", ${id}, ${xywh[1]});`);
+		result.push (`fact ("rect_w", ${id}, ${xywh[2]});`);
+		result.push (`fact ("rect_h", ${id}, ${xywh[3]});`);
+		return result.join('\n'); 
+	    },
+	    // text returns an array[3] of fact strings
+	    text: function (_text, wss1, idTree, xyTree, _gt, wss2, chars, _endText, wss3) {
+		var result =[];
+		var id = idTree.toFactbase ();
+		var xy = xyTree.toFactbase ();
+		result.push (`fact ("text_x", ${id}, ${xy[0]});`);
+		result.push (`fact ("text_y", ${id}, ${xy[1]});`);
+		result.push (`fact ("text_text", ${id}, "${chars.unity().join('')}");`);
+		return result.join('\n'); 
+	    },
+	    id: function (_ideq, id) { return id.toFactbase (); },
+	    xywh: function (xy, wh) { return xy.toFactbase ().concat (wh.toFactbase ()); },
+	    xy: function (_xeq, xnum, _yeq, ynum) {
+		return [xnum.toFactbase (), ynum.toFactbase ()]; 
+	    },
+	    wh: function (_weq, wnum, _heq, hnum) {
+		return [wnum.toFactbase (), hnum.toFactbase ()]; 
+	    },
+	    htmlchar: function (c) { return c.toFactbase (); },
+	    numString: function (_q1, ds, _q2, _wss) { return parseInt(toPackedString (ds.unity ()));},
+	    string: function (_q1, cs, _q2, wss) { 
+		return '"' + cs.toFactbase ().join ('') + '"';
+	    },
+	    notDQuote: function (c) { return c.toFactbase (); },
+
+	    svgHeader: function (_svg, wss) { throw "INTERNAL ERROR"; },
+
+	    ws: function (c) { 
+		return c.toFactbase ();
+	    },
+
+	    _terminal: function () { return this.primitiveValue; }
+	});
+    
+    semantics.addOperation (
+	'addFactbaseToHTML',
+	// glue the Factbase (as a <script>) to the raw HTML
+
+	// implementation note: every rule before svgSection calls .addFactbaseToHTML(),
+	//   every rule after svgSection can call .unity()
+	//   the gluing happens in svgSection, after which it is business as usual (.unity)
+
+	{
+	    html: function (wss, htmlElement, headerStuff, bodyElement, bodyStuff, bodyElementEnd, htmlEnd) {
+		return wss.addFactbaseToHTML ().join ('') + htmlElement.addFactbaseToHTML () + headerStuff.addFactbaseToHTML () + bodyElement.addFactbaseToHTML () + bodyStuff.addFactbaseToHTML () + bodyElementEnd.addFactbaseToHTML () + htmlEnd.addFactbaseToHTML (); 
+	    },
+	    htmlElement: function (html, wss) { return "<html>" + wss.addFactbaseToHTML ().join (''); },
+	    headerStuff: function (stuff) { return stuff.addFactbaseToHTML ().join (''); },
+	    bodyElement: function (body, wss) { return "<body>" + wss.addFactbaseToHTML ().join ('')},
+	    bodyStuff: function (stuff) { return stuff.addFactbaseToHTML ().join (''); },
+	    notBody:function (c) { return c.unity (); },
+	    notBodyEnd: function (c) { return c.unity (); },
+	    bodyElementEnd: function (body, wss) { return "</body>" + wss.unity ().join ('');},
+	    htmlEnd: function (html, wss) { return "</html>" + wss.unity ().join ('');},
+
+	    bodyStuff: function (pres, svg, post) { return pres.addFactbaseToHTML ().join('') + svg.addFactbaseToHTML () + post.addFactbaseToHTML (); },
+
+	    bodyStuffPre: function (c) { return c.addFactbaseToHTML (); },
+	    bodyStuffPost: function (stuff) { return stuff.unity (); },
+
+	    // the switcheroo happens here
+	    // emit the raw unity HTML, plus the factbase for the SVG (as a <script> of "fact" calls) 
+	    svgSection: function (svg, wh, _gt, wss1, elements, endSvg, wss2) {
+		return svg.unity () + wh.unity () + ">" +
+		    wss1.unity ().join ('') + elements.unity ().join ("") + "</svg>" +
+		    wss2.unity ().join ('') +
+		    "<script>\n" +
+		    elements.toFactbase ().join("\n") +
+		    "\n</script>\n"
+		    ;
+	    },
+	    
+	    rect: function (_rect, wss1, id, xywh, gt, wss2, _endRect, wss3) { throw "INTERNAL ERROR"; },
+	    text: function (_text, wss1, id, xy, _gt, wss2, cs, _endText, wss3) { throw "INTERNAL ERROR"; },
+
+	    id: function (ideq, id) { return "\"id${id.addFactbaseToHTML ()}\""; },
+	    xywh: function (xy, wh) { return xy.unity () + wh.unity (); },
+	    xy: function (xeq, xnum, yeq, ynum) {
+		return "x=" + xnum.unity () + "y=" + ynum.unity (); 
+	    },
+	    wh: function (weq, wnum, heq, hnum) {
+		return "width=" + wnum.unity () + "height=" + hnum.unity (); 
+	    },
+	    htmlchar: function (c) { return c.unity (); },
+	    numString: function (_q1, ds, _q2, wss) {
+		return '"' + ds.unity ().join ('') + '"' + wss.unity ().join ('');
+	    },
+	    string: function (_q1, cs, _q2, wss) { 
+		return '"' + cs.unity ().join ('') + '"' + wss.unity ().join ('');
+	    },
+	    notDQuote: function (c) { return c.unity (); },
+
+	    svgHeader: function (_svg, wss) {
+		return "<svg" + wss.unity ().join ('');
+	    },
+
+	    ws: function (c) { 
+		return c.unity ();
+	    },
+
+	    _terminal: function () { return this.primitiveValue; }
+	});
+    
+    console.log (semantics (parseTree).addFactbaseToHTML ());
 }
 
 	
