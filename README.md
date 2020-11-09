@@ -1,9 +1,14 @@
-ag-js-3
+ag-js-4
 
-This is an embellishment of ag-js.
+This is an embellishment of ag-js, ag-js-2 and ag-js-3.
 
-This is the 3rd step in a continuum of steps from ag-js to a (more) final version.
+In this step, I create an HTML to factbase DSL transpiler using Ohm-JS.
 
-This version shows how to carve out the timeout logic and to make it into a separate part.
+I will explain what a factbase is.
+
+I will explain why I use the name SCL to talk about things that are usually called DSLs.
 
 Learn what you can from this version, then move on.
+
+
+See transpiler-pipelne.drawio

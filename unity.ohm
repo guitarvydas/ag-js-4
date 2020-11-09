@@ -1,0 +1,46 @@
+
+const ohmQuote = '"' + "\\" + '"' + '"';
+
+const unityGrammar = `
+htmlUnity {
+    html = ws* htmlElement headerStuff bodyElement bodyStuff bodyElementEnd htmlEnd
+    htmlElement = "<html>" ws*
+    headerStuff = notBody*
+    bodyElement = "<body>" ws*
+    bodyStuff = notBodyEnd*	
+    notBody = ~"<body>" any
+    notBodyEnd = ~"</body>" any
+    bodyElementEnd = "</body>" ws*
+    htmlEnd = "</html>" ws*
+    ws = " " | "\\t" | "\\n"
+}
+htmlSVGUnity <: htmlUnity {
+    bodyStuff := bodyStuffPre* svgSection bodyStuffPost*
+    bodyStuffPre = ~svgHeader any
+    bodyStuffPost = ~"</body>" any
+    
+    svgSection = svgHeader wh ">" ws* (rect | text)+ "</svg>" ws*
+  
+    rect = "<rect" ws* id xywh ">" ws* "</rect>" ws*
+    text = "<text" ws* id xy ">" ws* htmlchar+ "</text>" ws*
+    id = "id=" string
+    xywh = xy wh
+    xy = "x=" numString "y=" numString
+    wh = "width=" numString "height=" numString
+    htmlchar = ~">" ~"<" any
+    numString = ${ohmQuote} digit+ ${ohmQuote} ws*
+    string = ${ohmQuote} notDQuote* ${ohmQuote} ws*
+    notDQuote = ~${ohmQuote} any
+
+    svgHeader = "<svg" ws*
+
+    ws := " " | "\\t" | "\\n"
+}
+`;
+
+
+
+
+
+
+	
