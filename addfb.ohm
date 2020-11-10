@@ -1,6 +1,6 @@
 const ohmQuote = '"' + "\\" + '"' + '"';
 
-const unityGrammar = `
+const addfbGrammar = `
 htmlUnity {
     html = ws* htmlElement headerStuff bodyElement bodyStuff bodyElementEnd htmlEnd
     htmlElement = "<html>" ws*

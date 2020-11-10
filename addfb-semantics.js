@@ -1,4 +1,4 @@
-const grammars = ohm.grammars (unityGrammar);
+const grammars = ohm.grammars (addfbGrammar);
 const grammar = grammars["htmlSVGUnity"];
 var args = require('minimist') (process.argv.slice (2));
 var inputFilename = args['input'];
@@ -25,27 +25,27 @@ if (parseTree.failed ()) {
 	    html: function (wss, htmlElement, headerStuff, bodyElement, bodyStuff, bodyElementEnd, htmlEnd) {
 		return wss.unity ().join ('') + htmlElement.unity () + headerStuff.unity () + bodyElement.unity () + bodyStuff.unity () + bodyElementEnd.unity () + htmlEnd.unity (); 
 	    },
-	    htmlElement: function (html, wss) { return "<html>" + wss.unity ().join (''); },
+	    htmlElement: function (html, wss) { return "<" + "html>" + wss.unity ().join (''); },
 	    headerStuff: function (stuff) { return stuff.unity ().join (''); },
-	    bodyElement: function (body, wss) { return "<body>" + wss.unity ().join ('')},
+	    bodyElement: function (body, wss) { return "<" + "body>" + wss.unity ().join ('')},
 	    bodyStuff: function (stuff) { return stuff.unity ().join (''); },
 	    notBody:function (c) { return c.unity (); },
 	    notBodyEnd: function (c) { return c.unity (); },
-	    bodyElementEnd: function (body, wss) { return "</body>" + wss.unity ().join ('');},
-	    htmlEnd: function (html, wss) { return "</html>" + wss.unity ().join ('');},
+	    bodyElementEnd: function (body, wss) { return "<" + "/body>" + wss.unity ().join ('');},
+	    htmlEnd: function (html, wss) { return "<" + "/html>" + wss.unity ().join ('');},
 
 	    bodyStuff: function (pres, svg, post) { return pres.unity ().join('') + svg.unity () + post.unity (); },
 
 	    bodyStuffPre: function (c) { return c.unity (); },
 	    bodyStuffPost: function (stuff) { return stuff.unity (); },
 	    svgSection: function (svg, wh, _gt, wss1, elements, endSvg, wss2) {
-		return svg.unity () + wh.unity () + ">" + wss1.unity ().join ('') + elements.unity ().join ('') + "</svg>" + wss2.unity ().join ('');
+		return svg.unity () + wh.unity () + ">" + wss1.unity ().join ('') + elements.unity ().join ('') + "<" + "/svg>" + wss2.unity ().join ('');
 	    },
 	    rect: function (_rect, wss1, id, xywh, gt, wss2, _endRect, wss3) {
-		return "<rect" + wss1.unity ().join('') + id.unity () + xywh.unity () + ">" + wss2.unity ().join ('') + "</rect>" + wss3.unity ().join ('');
+		return "<" + "rect" + wss1.unity ().join('') + id.unity () + xywh.unity () + ">" + wss2.unity ().join ('') + "<" + "/rect>" + wss3.unity ().join ('');
 	    },
 	    text: function (_text, wss1, id, xy, _gt, wss2, cs, _endText, wss3) {
-		return "<text" + wss1.unity ().join ('') + id.unity () + xy.unity () + ">" + wss2.unity ().join ('') + "</text>" + wss3.unity ().join ('');
+		return "<" + "text" + wss1.unity ().join ('') + id.unity () + xy.unity () + ">" + wss2.unity ().join ('') + "<" + "/text>" + wss3.unity ().join ('');
 	    },
 	    id: function (ideq, id) { return "id=" + id.unity (); },
 	    xywh: function (xy, wh) { return xy.unity () + wh.unity (); },
@@ -65,7 +65,7 @@ if (parseTree.failed ()) {
 	    notDQuote: function (c) { return c.unity (); },
 
 	    svgHeader: function (_svg, wss) {
-		return "<svg" + wss.unity ().join ('');
+		return "<" + "svg" + wss.unity ().join ('');
 	    },
 
 	    ws: function (c) { 
@@ -155,14 +155,14 @@ if (parseTree.failed ()) {
 	    html: function (wss, htmlElement, headerStuff, bodyElement, bodyStuff, bodyElementEnd, htmlEnd) {
 		return wss.addFactbaseToHTML ().join ('') + htmlElement.addFactbaseToHTML () + headerStuff.addFactbaseToHTML () + bodyElement.addFactbaseToHTML () + bodyStuff.addFactbaseToHTML () + bodyElementEnd.addFactbaseToHTML () + htmlEnd.addFactbaseToHTML (); 
 	    },
-	    htmlElement: function (html, wss) { return "<html>" + wss.addFactbaseToHTML ().join (''); },
+	    htmlElement: function (html, wss) { return "<" + "html>" + wss.addFactbaseToHTML ().join (''); },
 	    headerStuff: function (stuff) { return stuff.addFactbaseToHTML ().join (''); },
-	    bodyElement: function (body, wss) { return "<body>" + wss.addFactbaseToHTML ().join ('')},
+	    bodyElement: function (body, wss) { return "<" + "body>" + wss.addFactbaseToHTML ().join ('')},
 	    bodyStuff: function (stuff) { return stuff.addFactbaseToHTML ().join (''); },
 	    notBody:function (c) { return c.unity (); },
 	    notBodyEnd: function (c) { return c.unity (); },
-	    bodyElementEnd: function (body, wss) { return "</body>" + wss.unity ().join ('');},
-	    htmlEnd: function (html, wss) { return "</html>" + wss.unity ().join ('');},
+	    bodyElementEnd: function (body, wss) { return "<" + "/body>" + wss.unity ().join ('');},
+	    htmlEnd: function (html, wss) { return "<" + "/html>" + wss.unity ().join ('');},
 
 	    bodyStuff: function (pres, svg, post) { return pres.addFactbaseToHTML ().join('') + svg.addFactbaseToHTML () + post.addFactbaseToHTML (); },
 
@@ -173,12 +173,12 @@ if (parseTree.failed ()) {
 	    // emit the raw unity HTML, plus the factbase for the SVG (as a <script> of "fact" calls) 
 	    svgSection: function (svg, wh, _gt, wss1, elements, endSvg, wss2) {
 		return svg.unity () + wh.unity () + ">" +
-		    wss1.unity ().join ('') + elements.unity ().join ("") + "</svg>" +
+		    wss1.unity ().join ('') + elements.unity ().join ("") + "<" + "/svg>" +
 		    wss2.unity ().join ('') +
-		    "<script>\n" +
+		    "<" + "script>\n" +
 		    elements.toFactbase ().join("\n") +
 		    "\n</script>\n"
-		    ;
+		;
 	    },
 	    
 	    rect: function (_rect, wss1, id, xywh, gt, wss2, _endRect, wss3) { throw "INTERNAL ERROR"; },
@@ -202,7 +202,7 @@ if (parseTree.failed ()) {
 	    notDQuote: function (c) { return c.unity (); },
 
 	    svgHeader: function (_svg, wss) {
-		return "<svg" + wss.unity ().join ('');
+		return "<" + "svg" + wss.unity ().join ('');
 	    },
 
 	    ws: function (c) { 
@@ -214,12 +214,3 @@ if (parseTree.failed ()) {
     
     console.log (semantics (parseTree).addFactbaseToHTML ());
 }
-
-	
-
-
-
-
-
-
-	

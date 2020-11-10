@@ -9,6 +9,7 @@ function lvar (s) { return list ("?",s); };
 function fact0 (r) { pushDB (list (list (r))); }
 function fact1 (r,s) { pushDB (list (list (r, car(s)))); }
 function fact2 (r,s,o) { pushDB (list (list (r,car(s),car(o)))); }
+var fact = fact2;
 function rule (head, bod) {
     // make multiple rules, one for each body clause: cons(head,clause)
     // head is a Cons()
@@ -35,5 +36,3 @@ var functor2 = list;
 var head = list;
 var body = list;
 var goal = list;
-
-      function execQuery () {
